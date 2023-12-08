@@ -1,6 +1,4 @@
 # Spring boot and Microservice with Kubernates 
-Spring demo with Microservice and Kubernetes
-
 
 ## Running kubernates dashboard
 - kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
