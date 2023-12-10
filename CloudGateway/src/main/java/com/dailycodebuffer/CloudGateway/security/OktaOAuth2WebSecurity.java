@@ -14,7 +14,10 @@ public class OktaOAuth2WebSecurity {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange()
+                .pathMatchers("/cognito/**").permitAll()
                 .anyExchange().authenticated()
+                .and().csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange()
                 .and()
                 .oauth2Login()
                 .and()

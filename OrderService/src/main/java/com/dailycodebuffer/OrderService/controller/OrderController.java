@@ -25,13 +25,12 @@ public class OrderController {
         return new ResponseEntity<>(orderId, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('Admin') || hasAuthority('Customer')")
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrderDetails(@PathVariable long orderId) {
-        OrderResponse orderResponse
-                = orderService.getOrderDetails(orderId);
+    public ResponseEntity<?> getOrderDetails(@PathVariable long orderId) {
+//        OrderResponse orderResponse
+//                = orderService.getOrderDetails(orderId);
 
-        return new ResponseEntity<>(orderResponse,
+        return new ResponseEntity<>("teste",
                 HttpStatus.OK);
     }
 }
