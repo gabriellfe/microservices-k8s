@@ -12,17 +12,8 @@ public class OktaOAuth2WebSecurity {
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
-        http
-                .authorizeExchange()
-                .pathMatchers("/cognito/**").permitAll()
-                .anyExchange().authenticated()
-                .and().csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange()
-                .and()
-                .oauth2Login()
-                .and()
-                .oauth2ResourceServer()
-                .jwt();
+        http.csrf().disable()
+                .authorizeExchange().anyExchange().permitAll();
         return http.build();
     }
 }

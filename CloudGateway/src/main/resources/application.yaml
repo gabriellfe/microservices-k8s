@@ -22,13 +22,6 @@ spring:
               args:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
-        - id : ORDER-SERVICE-BYPASS
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/cognito/order/**
-          filters:
-            - CognitoFilter
-            - StripPrefix=1
         - id: PAYMENT-SERVICE
           uri: lb://PAYMENT-SERVICE
           predicates:
@@ -55,8 +48,28 @@ spring:
               args:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
-            
-
+#         ROTAS COGNITO       
+        - id : PAYMENT-SERVICE-COGNITO
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/cognito/payment/**
+          filters:
+            - CognitoFilter
+            - StripPrefix=1            
+        - id : PRODUCT-SERVICE-COGNITO
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/cognito/product/**
+          filters:
+            - CognitoFilter
+            - StripPrefix=1   
+        - id : ORDER-SERVICE-COGNITO
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/cognito/order/**
+          filters:
+            - CognitoFilter
+            - StripPrefix=1
 #okta:
 #  oauth2:
 #    issuer: https://dev-56986490.okta.com/oauth2/default

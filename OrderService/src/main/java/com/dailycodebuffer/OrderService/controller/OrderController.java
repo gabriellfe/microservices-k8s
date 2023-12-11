@@ -27,10 +27,10 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrderDetails(@PathVariable long orderId) {
-//        OrderResponse orderResponse
-//                = orderService.getOrderDetails(orderId);
+        OrderResponse orderResponse
+                = orderService.getOrderDetails(orderId);
 
-        return new ResponseEntity<>("teste",
+        return new ResponseEntity<>(orderResponse,
                 HttpStatus.OK);
     }
 }
