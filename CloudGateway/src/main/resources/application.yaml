@@ -33,7 +33,7 @@ spring:
           predicates:
             - Path=/payment/**
           filters:
-            - OktaFilter
+            - TokenFilter
             - name: CircuitBreaker
               args:
                 name: PAYMENT-SERVICE
@@ -47,7 +47,7 @@ spring:
           predicates:
             - Path=/product/**
           filters:
-            - OktaFilter
+            - TokenFilter
             - name: CircuitBreaker
               args:
                 name: PRODUCT-SERVICE
