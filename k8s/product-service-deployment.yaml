@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: product-service-app
-        image: gabriellfe/productservice:0.0.1
+        image: gabriellfe/productservice:0.0.2
         imagePullPolicy: Always
         ports:
         - containerPort: 8082

@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: cloud-gateway-app
-        image: gabriellfe/cloudgateway:0.0.3
+        image: gabriellfe/cloudgateway:0.0.2
         ports:
         - containerPort: 9090
         env:
