@@ -13,7 +13,8 @@ spec:
     spec:
       containers:
       - name: cloud-gateway-app
-        image: gabriellfe/cloudgateway:0.0.2
+        image: gabriellfe/cloudservice:0.0.8
+        imagePullPolicy: Always
         ports:
         - containerPort: 9090
         env:
@@ -27,7 +28,11 @@ spec:
               configMapKeyRef:
                 name: eureka-cm
                 key: eureka_service_address
-                
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-cm
+                key: hostname
 ---
 
 apiVersion: v1

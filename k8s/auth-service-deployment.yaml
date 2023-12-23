@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-service-app
+  name: auth-service-app
 spec:
   selector:
     matchLabels:
-      app: order-service-app
+      app: auth-service-app
   template:
     metadata:
       labels:
-        app: order-service-app
+        app: auth-service-app
     spec:
       containers:
-      - name: order-service-app
-        image: gabriellfe/orderservice:0.0.3
+      - name: auth-service-app
+        image: gabriellfe/authservice:0.0.1
         imagePullPolicy: Always
         ports:
-        - containerPort: 8082
+        - containerPort: 8090
         env:
         - name: CONFIG_SERVER_URL
           valueFrom:
@@ -39,10 +39,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: order-service-svc
+  name: auth-service-svc
 spec:
   selector:
-    app: order-service-app
+    app: auth-service-app
   ports:
   - port: 80
-    targetPort: 8082
+    targetPort: 8090
+

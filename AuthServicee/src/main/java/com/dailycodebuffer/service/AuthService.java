@@ -14,6 +14,7 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.dto.LoginRequestDTO;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
+import com.dailycodebuffer.exception.AuthLoginException;
 import com.dailycodebuffer.model.Usuario;
 import com.dailycodebuffer.repository.UsuarioRepository;
 import com.google.common.hash.Hashing;
@@ -33,22 +34,22 @@ public class AuthService {
 		Usuario user = usuarioRepository.findByEmail(login.getLogin());
 		if (user == null) {
 			log.error("User not found");
-			return null;
+			throw new AuthLoginException("User not found");
 		}
 		if (!bcrypt.matches(login.getPassword(), user.getPassword())){
 			log.error("Password Dont match");
-			return null;
+			throw new AuthLoginException("Password do not match");
 		}
 		String currentNanoTime = String.valueOf(System.nanoTime());
 		String transactionId = String.valueOf(Thread.currentThread().getId());
 		String transaction = currentNanoTime + transactionId;
-		String secretKet = Base64.getEncoder().encodeToString(Hashing.sha256().hashString(transaction, StandardCharsets.UTF_8).asBytes());
+		String secretKey = Base64.getEncoder().encodeToString(Hashing.sha256().hashString(transaction, StandardCharsets.UTF_8).asBytes());
 		JWTCreator.Builder jwtBuilder = JWT.create();
-		Algorithm algo = Algorithm.HMAC256(secretKet);
+		Algorithm algo = Algorithm.HMAC256(secretKey);
 		long nowsec = Calendar.getInstance().getTime().getTime() / 1000;
-		user.setSecret(secretKet);
+		user.setSecret(secretKey);
 		usuarioRepository.save(user);
-		return jwtBuilder.withClaim("EXP", nowsec + 100000).withClaim("client", user.getName()).sign(algo);
+		return jwtBuilder.withClaim("EXP", nowsec + 100000).withClaim("client", user.getEmail()).sign(algo);
 	}
 
 	public void createUser(UsuarioRequestDTO login) {
