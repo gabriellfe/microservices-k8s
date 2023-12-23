@@ -22,7 +22,7 @@ public class AuthController {
 		return ResponseEntity.ok(authservice.doLogin(loginRequestDto));
 	}
 	
-	@PostMapping(value = "/user/create/user")
+	@PostMapping(value = "/user/create")
 	public ResponseEntity<String> createUser(@RequestBody UsuarioRequestDTO loginRequestDto){
 		authservice.createUser(loginRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

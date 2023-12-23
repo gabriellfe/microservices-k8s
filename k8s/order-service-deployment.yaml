@@ -16,7 +16,7 @@ spec:
         image: gabriellfe/orderservice:0.0.3
         imagePullPolicy: Always
         ports:
-        - containerPort: 8082
+        - containerPort: 8083
         env:
         - name: CONFIG_SERVER_URL
           valueFrom:
@@ -44,5 +44,6 @@ spec:
   selector:
     app: order-service-app
   ports:
-  - port: 80
-    targetPort: 8082
+  - protocol: "TCP"
+    port: 80
+    targetPort: 8083

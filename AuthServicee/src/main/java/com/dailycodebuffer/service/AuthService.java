@@ -5,6 +5,9 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Calendar;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,20 +33,21 @@ public class AuthService {
 
 	public String doLogin(LoginRequestDTO login) {
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-		
+
 		Usuario user = usuarioRepository.findByEmail(login.getLogin());
 		if (user == null) {
 			log.error("User not found");
 			throw new AuthLoginException("User not found");
 		}
-		if (!bcrypt.matches(login.getPassword(), user.getPassword())){
+		if (!bcrypt.matches(login.getPassword(), user.getPassword())) {
 			log.error("Password Dont match");
 			throw new AuthLoginException("Password do not match");
 		}
 		String currentNanoTime = String.valueOf(System.nanoTime());
 		String transactionId = String.valueOf(Thread.currentThread().getId());
 		String transaction = currentNanoTime + transactionId;
-		String secretKey = Base64.getEncoder().encodeToString(Hashing.sha256().hashString(transaction, StandardCharsets.UTF_8).asBytes());
+		String secretKey = Base64.getEncoder()
+				.encodeToString(Hashing.sha256().hashString(transaction, StandardCharsets.UTF_8).asBytes());
 		JWTCreator.Builder jwtBuilder = JWT.create();
 		Algorithm algo = Algorithm.HMAC256(secretKey);
 		long nowsec = Calendar.getInstance().getTime().getTime() / 1000;
@@ -53,13 +57,36 @@ public class AuthService {
 	}
 
 	public void createUser(UsuarioRequestDTO login) {
+
+		if (!isValidEmailAddress(login.getEmail())) {
+			log.error("Invalid e-mail");
+			throw new AuthLoginException("Invalid e-mail");
+		}
+
+		Usuario user = usuarioRepository.findByEmail(login.getEmail());
+		if (user != null) {
+			log.error("User already exists");
+			throw new AuthLoginException("User already exists");
+		}
+
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-		Usuario user = new Usuario();
+		user = new Usuario();
 		user.setDtCriacao(Instant.now());
 		user.setEmail(login.getEmail());
 		user.setName(login.getName());
 		user.setPassword(bcrypt.encode(login.getPassword()));
 		usuarioRepository.save(user);
+	}
+
+	public boolean isValidEmailAddress(String email) {
+		boolean result = true;
+		try {
+			InternetAddress emailAddr = new InternetAddress(email);
+			emailAddr.validate();
+		} catch (AddressException ex) {
+			result = false;
+		}
+		return result;
 	}
 
 }
