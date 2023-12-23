@@ -23,7 +23,6 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 
 	private final String GATEWAY_TOKEN = "gw_token";
 	private final String TOKEN = "token";
-	private final String USER = "user_login";
 
 	private UsuarioRepository repo;
 
@@ -43,16 +42,13 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 					String jwtToken = exchange.getRequest().getHeaders().getFirst(TOKEN);
 					String base64EncodedBody = jwtToken.split("\\.")[1];
 					String body = new String(Base64.getDecoder().decode(base64EncodedBody));
-					log.info(body);
 					ObjectMapper objectMapper = new ObjectMapper();
 					UserDTO user = objectMapper.readValue(body, UserDTO.class);
 
 					String secret = repo.findByEmail(user.getClient()).getSecret();
-					JWT.require(Algorithm.HMAC256(secret)).build()
-							.verify(exchange.getRequest().getHeaders().getFirst(TOKEN));
+					JWT.require(Algorithm.HMAC256(secret)).build().verify(exchange.getRequest().getHeaders().getFirst(TOKEN));
 					exchange.getRequest().mutate().header(GATEWAY_TOKEN, GwTokenUtil.generateGwToken());
-					log.info("Filtering: {} for {}", exchange.getRequest().getMethodValue(),
-							exchange.getRequest().getURI());
+					log.info("Filtering: {} for {}", exchange.getRequest().getMethodValue(),exchange.getRequest().getURI());
 					return chain.filter(exchange);
 				}
 			} catch (Exception e) {

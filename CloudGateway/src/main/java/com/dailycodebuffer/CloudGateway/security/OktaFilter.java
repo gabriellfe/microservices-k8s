@@ -50,8 +50,7 @@ public class OktaFilter extends AbstractGatewayFilterFactory<OktaFilter.Config> 
 						log.info("token expired: {}", jwt.getExpiresAt().compareTo(now.toInstant(ZoneOffset.UTC)));
 						throw new AuthorizeException("Token expired", HttpStatus.FORBIDDEN);
 					}
-					
-					log.info("token: {}", exchange.getRequest().getHeaders().getFirst(ACCESSTOKEN));
+	
 					log.info("Filtering: {} for {}", exchange.getRequest().getMethodValue(),exchange.getRequest().getURI());
 					exchange.getRequest().mutate().header(GATEWAY_TOKEN, GwTokenUtil.generateGwToken());
 					return chain.filter(exchange);

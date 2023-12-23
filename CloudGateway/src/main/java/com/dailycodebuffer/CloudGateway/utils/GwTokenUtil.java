@@ -31,7 +31,6 @@ public class GwTokenUtil {
 		try {
 			Cipher cipher = initCipher(Cipher.ENCRYPT_MODE, key);
 			byte[] bytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
-			log.info("Gw_Token generated: [{}]", Base64.getEncoder().encodeToString(bytes));
 			return Base64.getEncoder().encodeToString(bytes);
 		} catch (Exception e) {
 			e.printStackTrace();
