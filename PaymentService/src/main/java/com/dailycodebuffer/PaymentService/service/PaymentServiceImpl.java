@@ -1,6 +1,7 @@
 package com.dailycodebuffer.PaymentService.service;
 
 import com.dailycodebuffer.PaymentService.entity.TransactionDetails;
+import com.dailycodebuffer.PaymentService.exception.ValidateException;
 import com.dailycodebuffer.PaymentService.model.PaymentMode;
 import com.dailycodebuffer.PaymentService.model.PaymentRequest;
 import com.dailycodebuffer.PaymentService.model.PaymentResponse;
@@ -45,6 +46,10 @@ public class PaymentServiceImpl implements PaymentService{
 
         TransactionDetails transactionDetails
                 = transactionDetailsRepository.findByOrderId(Long.valueOf(orderId));
+        
+        if (transactionDetails == null) {
+        	throw new ValidateException("Paymente not found !");
+        }
 
         PaymentResponse paymentResponse
                 = PaymentResponse.builder()

@@ -2,6 +2,11 @@ server:
   port: 9090
 
 spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/usuariodb
+    username: root
+    password: root
+    driverClassName: com.mysql.cj.jdbc.Driver
   application:
     name: API-GATEWAY
   config:
@@ -14,6 +19,7 @@ spring:
           predicates:
             - Path=/order/**
           filters:
+            - TokenFilter
             - name: CircuitBreaker
               args:
                 name: ORDER-SERVICE
@@ -27,6 +33,7 @@ spring:
           predicates:
             - Path=/payment/**
           filters:
+            - TokenFilter
             - name: CircuitBreaker
               args:
                 name: PAYMENT-SERVICE
@@ -40,6 +47,7 @@ spring:
           predicates:
             - Path=/product/**
           filters:
+            - TokenFilter
             - name: CircuitBreaker
               args:
                 name: PRODUCT-SERVICE
@@ -48,8 +56,57 @@ spring:
               args:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
-            
-
+#         ROTAS COGNITO       
+        - id : PAYMENT-SERVICE-COGNITO
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/cognito/payment/**
+          filters:
+            - CognitoFilter
+            - StripPrefix=1            
+        - id : PRODUCT-SERVICE-COGNITO
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/cognito/product/**
+          filters:
+            - CognitoFilter
+            - StripPrefix=1   
+        - id : ORDER-SERVICE-COGNITO
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/cognito/order/**
+          filters:
+            - CognitoFilter
+            - StripPrefix=1
+#         Bypass   
+        - id : AUTH-SERVICE-COGNITO
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/user/**
+          filters:
+            - BypassFilter
+#         ROTAS Okta       
+        - id : PAYMENT-SERVICE-OKTA
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/okta/payment/**
+          filters:
+            - OktaFilter
+            - StripPrefix=1            
+        - id : PRODUCT-SERVICE-COGNITO
+          uri: lb://PRODUCT-OKTA
+          predicates:
+            - Path=/okta/product/**
+          filters:
+            - OktaFilter
+            - StripPrefix=1   
+        - id : ORDER-SERVICE-COGNITO
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/okta/order/**
+          filters:
+            - OktaFilter
+            - StripPrefix=1
 #okta:
 #  oauth2:
 #    issuer: https://dev-56986490.okta.com/oauth2/default

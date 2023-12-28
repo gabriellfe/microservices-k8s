@@ -7,6 +7,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
+import com.dailycodebuffer.OrderService.utils.GwTokenUtil;
+
 import java.io.IOException;
 
 public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
@@ -21,15 +23,7 @@ public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        request.getHeaders().add("Authorization",
-                "Bearer " +
-                oAuth2AuthorizedClientManager
-                        .authorize(OAuth2AuthorizeRequest
-                                .withClientRegistrationId("internal-client")
-                                .principal("internal")
-                                .build())
-                        .getAccessToken().getTokenValue());
-
+        request.getHeaders().add("gw_token", GwTokenUtil.generateGwToken());
         return execution.execute(request, body);
     }
 }
