@@ -15,7 +15,7 @@ spring:
     gateway:
       routes:
         - id : ORDER-SERVICE
-          uri: lb://ORDER-SERVICE
+          uri: http://order-service-svc
           predicates:
             - Path=/order/**
           filters:
@@ -29,7 +29,7 @@ spring:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
         - id: PAYMENT-SERVICE
-          uri: lb://PAYMENT-SERVICE
+          uri: http://payment-service-svc
           predicates:
             - Path=/payment/**
           filters:
@@ -43,7 +43,7 @@ spring:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
         - id: PRODUCT-SERVICE
-          uri: lb://PRODUCT-SERVICE
+          uri: http://product-service-svc
           predicates:
             - Path=/product/**
           filters:
@@ -58,21 +58,21 @@ spring:
                 redis-rate-limiter.burstCapacity: 1
 #         ROTAS COGNITO       
         - id : PAYMENT-SERVICE-COGNITO
-          uri: lb://PAYMENT-SERVICE
+          uri: http://payment-service-svc
           predicates:
             - Path=/cognito/payment/**
           filters:
             - CognitoFilter
             - StripPrefix=1            
         - id : PRODUCT-SERVICE-COGNITO
-          uri: lb://PRODUCT-SERVICE
+          uri: http://product-service-svc
           predicates:
             - Path=/cognito/product/**
           filters:
             - CognitoFilter
             - StripPrefix=1   
         - id : ORDER-SERVICE-COGNITO
-          uri: lb://ORDER-SERVICE
+          uri: http://order-service-svc
           predicates:
             - Path=/cognito/order/**
           filters:
@@ -80,28 +80,28 @@ spring:
             - StripPrefix=1
 #         Bypass   
         - id : AUTH-SERVICE-COGNITO
-          uri: lb://AUTH-SERVICE
+          uri: http://auth-service-svc
           predicates:
             - Path=/user/**
           filters:
             - BypassFilter
 #         ROTAS Okta       
         - id : PAYMENT-SERVICE-OKTA
-          uri: lb://PAYMENT-SERVICE
+          uri: http://payment-service-svc
           predicates:
             - Path=/okta/payment/**
           filters:
             - OktaFilter
             - StripPrefix=1            
         - id : PRODUCT-SERVICE-COGNITO
-          uri: lb://PRODUCT-OKTA
+          uri: http://product-service-svc
           predicates:
             - Path=/okta/product/**
           filters:
             - OktaFilter
             - StripPrefix=1   
         - id : ORDER-SERVICE-COGNITO
-          uri: lb://ORDER-SERVICE
+          uri: http://order-service-svc
           predicates:
             - Path=/okta/order/**
           filters:

@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: cloud-gateway-app
-        image: gabriellfe/cloudservice:0.0.9
+        image: gabriellfe/cloudservice:0.0.10
         imagePullPolicy: Always
         ports:
         - containerPort: 9090

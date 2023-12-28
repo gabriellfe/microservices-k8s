@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: order-service-app
-        image: gabriellfe/orderservice:0.0.3
+        image: gabriellfe/orderservice:0.0.4
         imagePullPolicy: Always
         ports:
         - containerPort: 8082
