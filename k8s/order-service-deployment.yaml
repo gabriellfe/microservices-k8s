@@ -19,8 +19,22 @@ spec:
     spec:
       containers:
       - name: order-service-app
-        image: gabriellfe/orderservice:IMAGE_URL
+        image: gabriellfe/orderservice:7
         imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 80
+        livenessProbe:
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 80
         ports:
         - containerPort: 8082
         env:
@@ -39,7 +53,6 @@ spec:
             configMapKeyRef:
               name: eureka-cm
               key: eureka_service_address
-
 ---
 
 apiVersion: v1
