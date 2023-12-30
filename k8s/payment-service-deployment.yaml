@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: payment-service-app
-        image: gabriellfe/paymentservice:0.0.4
+        image: gabriellfe/paymentservice:IMAGE_URL
         imagePullPolicy: Always
         ports:
         - containerPort: 8081
