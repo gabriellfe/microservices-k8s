@@ -3,9 +3,15 @@ kind: Deployment
 metadata:
   name: order-service-app
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: order-service-app
+  ​​strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
