@@ -14,16 +14,17 @@ import org.springframework.stereotype.Component;
 
 import com.dailycodebuffer.utils.GwTokenUtil;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Component
-@Slf4j
 public class TransactionalSecurityFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
+		if (req.getRequestURI().contains("/livenessProbe")) {
+			chain.doFilter(request, response);
+			return;
+		}
 		boolean isGwToken = GwTokenUtil.validateGwToken(req);
 		if (isGwToken) {
 			chain.doFilter(request, response);
@@ -35,7 +36,7 @@ public class TransactionalSecurityFilter implements Filter {
 			chain.doFilter(request, response);
 			return;
 		}
-		
+
 		HttpServletResponse res = (HttpServletResponse) response;
 		res.setStatus(401);
 
