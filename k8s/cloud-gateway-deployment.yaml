@@ -3,9 +3,15 @@ kind: Deployment
 metadata:
   name: cloud-gateway-app
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: cloud-gateway-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -13,7 +19,22 @@ spec:
     spec:
       containers:
       - name: cloud-gateway-app
-        image: gabriellfe/cloudgateway:0.0.3
+        image: gabriellfe/cloudservice:IMAGE_URL
+        imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 9090
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 9090
         ports:
         - containerPort: 9090
         env:
@@ -27,7 +48,11 @@ spec:
               configMapKeyRef:
                 name: eureka-cm
                 key: eureka_service_address
-                
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-cm
+                key: hostname
 ---
 
 apiVersion: v1

@@ -3,9 +3,15 @@ kind: Deployment
 metadata:
   name: product-service-app
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: product-service-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -13,10 +19,24 @@ spec:
     spec:
       containers:
       - name: product-service-app
-        image: gabriellfe/productservice:0.0.1
+        image: gabriellfe/productservice:IMAGE_URL
         imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 8080
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 8080
         ports:
-        - containerPort: 8082
+        - containerPort: 8080
         env:
         - name: CONFIG_SERVER_URL
           valueFrom:
@@ -45,5 +65,5 @@ spec:
     app: product-service-app
   ports:
   - port: 80
-    targetPort: 8082
+    targetPort: 8080
 

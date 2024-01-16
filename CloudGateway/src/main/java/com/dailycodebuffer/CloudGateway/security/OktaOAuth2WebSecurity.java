@@ -12,14 +12,8 @@ public class OktaOAuth2WebSecurity {
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
-        http
-                .authorizeExchange()
-                .anyExchange().authenticated()
-                .and()
-                .oauth2Login()
-                .and()
-                .oauth2ResourceServer()
-                .jwt();
+        http.csrf().disable()
+                .authorizeExchange().anyExchange().permitAll();
         return http.build();
     }
 }
