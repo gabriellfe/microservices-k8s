@@ -14,6 +14,13 @@ spring:
   cloud:
     gateway:
       routes:
+#         Bypass   
+        - id : AUTH-SERVICE-BYPASS
+          uri: http://auth-service-svc
+          predicates:
+            - Path=/user/login
+          filters:
+            - BypassFilter
         - id : ORDER-SERVICE
           uri: http://order-service-svc
           predicates:
@@ -24,10 +31,6 @@ spring:
               args:
                 name: ORDER-SERVICE
                 fallbackuri: forward:/orderServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: PAYMENT-SERVICE
           uri: http://payment-service-svc
           predicates:
@@ -38,10 +41,6 @@ spring:
               args:
                 name: PAYMENT-SERVICE
                 fallbackuri: forward:/paymentServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: PRODUCT-SERVICE
           uri: http://product-service-svc
           predicates:
@@ -52,10 +51,13 @@ spring:
               args:
                 name: PRODUCT-SERVICE
                 fallbackuri: forward:/productServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
+#         Bypass   
+        - id : AUTH-SERVICE
+          uri: http://auth-service-svc
+          predicates:
+            - Path=/user/**
+          filters:
+            - TokenFilter
 #         ROTAS COGNITO       
         - id : PAYMENT-SERVICE-COGNITO
           uri: http://payment-service-svc
@@ -77,35 +79,6 @@ spring:
             - Path=/cognito/order/**
           filters:
             - CognitoFilter
-            - StripPrefix=1
-#         Bypass   
-        - id : AUTH-SERVICE-COGNITO
-          uri: http://auth-service-svc
-          predicates:
-            - Path=/user/**
-          filters:
-            - BypassFilter
-#         ROTAS Okta       
-        - id : PAYMENT-SERVICE-OKTA
-          uri: http://payment-service-svc
-          predicates:
-            - Path=/okta/payment/**
-          filters:
-            - OktaFilter
-            - StripPrefix=1            
-        - id : PRODUCT-SERVICE-COGNITO
-          uri: http://product-service-svc
-          predicates:
-            - Path=/okta/product/**
-          filters:
-            - OktaFilter
-            - StripPrefix=1   
-        - id : ORDER-SERVICE-COGNITO
-          uri: http://order-service-svc
-          predicates:
-            - Path=/okta/order/**
-          filters:
-            - OktaFilter
             - StripPrefix=1
 #okta:
 #  oauth2:

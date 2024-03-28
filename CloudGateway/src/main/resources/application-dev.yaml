@@ -80,28 +80,6 @@ spring:
           filters:
             - CognitoFilter
             - StripPrefix=1
-#         ROTAS Okta       
-        - id : PAYMENT-SERVICE-OKTA
-          uri: lb://PAYMENT-SERVICE
-          predicates:
-            - Path=/okta/payment/**
-          filters:
-            - OktaFilter
-            - StripPrefix=1            
-        - id : PRODUCT-SERVICE-COGNITO
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/okta/product/**
-          filters:
-            - OktaFilter
-            - StripPrefix=1   
-        - id : ORDER-SERVICE-COGNITO
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/okta/order/**
-          filters:
-            - OktaFilter
-            - StripPrefix=1
 #okta:
 #  oauth2:
 #    issuer: https://dev-56986490.okta.com/oauth2/default
