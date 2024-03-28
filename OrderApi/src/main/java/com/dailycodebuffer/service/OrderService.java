@@ -4,7 +4,7 @@ import com.dailycodebuffer.dto.OrderRequest;
 import com.dailycodebuffer.dto.OrderResponse;
 
 public interface OrderService {
-    long placeOrder(OrderRequest orderRequest);
+    long placeOrder(OrderRequest orderRequest) throws Exception;
 
-    OrderResponse getOrderDetails(long orderId);
+    OrderResponse getOrderDetails(long orderId) throws Exception;
 }

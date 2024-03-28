@@ -26,19 +26,14 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/placeOrder")
-    public ResponseEntity<Long> placeOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Long> placeOrder(@RequestBody OrderRequest orderRequest) throws Exception {
         long orderId = orderService.placeOrder(orderRequest);
         log.info("Order Id: {}", orderId);
-        GwTokenUtil.generateGwToken();
         return new ResponseEntity<>(orderId, HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrderDetails(@PathVariable long orderId) {
-        OrderResponse orderResponse
-                = orderService.getOrderDetails(orderId);
-
-        return new ResponseEntity<>(orderResponse,
-                HttpStatus.OK);
+        return new ResponseEntity<>(orderService.getOrderDetails(orderId), HttpStatus.OK);
     }
 }
