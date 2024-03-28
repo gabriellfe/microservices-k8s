@@ -2,6 +2,7 @@ package com.dailycodebuffer.CloudGateway.security;
 
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -11,8 +12,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.CloudGateway.model.AuthorizeException;
 import com.dailycodebuffer.CloudGateway.model.UserDTO;
-import com.dailycodebuffer.commons.service.RedisService;
-import com.dailycodebuffer.commons.utils.GwTokenUtil;
+import com.dailycodebuffer.CloudGateway.service.RedisService;
+import com.dailycodebuffer.CloudGateway.util.GwTokenUtil;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,15 +25,15 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 
 	private final String GATEWAY_TOKEN = "gw_token";
 	private final String TOKEN = "token";
-
+	
+	@Autowired
 	private RedisService redisService;
 
 	public static class Config {
 	}
 
-	public TokenFilter( RedisService redisService) {
+	public TokenFilter() {
 		super(Config.class);
-		this.redisService = redisService;
 	}
 
 	@Override
@@ -47,6 +48,7 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 					UserDTO user = objectMapper.readValue(body, UserDTO.class);
 
 					String secret = (String) redisService.getValue("AUTH_" + user.getClient());
+					log.info("Secret in redis: [{}]", secret);
 					JWT.require(Algorithm.HMAC256(secret)).build().verify(exchange.getRequest().getHeaders().getFirst(TOKEN));
 					exchange.getRequest().mutate().header(GATEWAY_TOKEN, GwTokenUtil.generateGwToken());
 					log.info("Filtering: {} for {}", exchange.getRequest().getMethodValue(),exchange.getRequest().getURI());

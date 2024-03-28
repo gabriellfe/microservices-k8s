@@ -1,4 +1,4 @@
-package com.dailycodebuffer.commons.service;
+package com.dailycodebuffer.CloudGateway.service;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service("redisService")
-@ConditionalOnProperty(value = "enable.redis", havingValue = "true", matchIfMissing = false)
 public class RedisService {
 
 	private final ObjectMapper mapper;

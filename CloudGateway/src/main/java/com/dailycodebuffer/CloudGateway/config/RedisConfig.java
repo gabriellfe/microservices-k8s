@@ -1,6 +1,5 @@
-package com.dailycodebuffer.commons.config;
+package com.dailycodebuffer.CloudGateway.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -14,13 +13,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.dailycodebuffer.commons.properties.RedisProperties;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @Slf4j
-@ConditionalOnProperty(value = "enable.redis", havingValue = "true", matchIfMissing = false)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class RedisConfig {
 
     private final RedisProperties properties;

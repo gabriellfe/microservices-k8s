@@ -1,5 +1,6 @@
 package com.dailycodebuffer.commons.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@ConditionalOnProperty(value = "enable.web.security.filter", havingValue = "true", matchIfMissing = false)
 public class WebSecurityConfig {
 
 	@Bean

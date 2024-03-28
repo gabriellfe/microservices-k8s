@@ -8,12 +8,19 @@ spring:
     password: root
     driverClassName: com.mysql.cj.jdbc.Driver
   application:
-    name: API-GATEWAY
+    name: cloud-gateway
   config:
       import: configserver:${CONFIG_SERVER_URL:http://localhost:9296}
   cloud:
     gateway:
       routes:
+#         Bypass   
+        - id : AUTH-SERVICE-COGNITO
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/user/login
+          filters:
+            - BypassFilter
         - id : ORDER-SERVICE
           uri: lb://ORDER-SERVICE
           predicates:
@@ -24,10 +31,6 @@ spring:
               args:
                 name: ORDER-SERVICE
                 fallbackuri: forward:/orderServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: PAYMENT-SERVICE
           uri: lb://PAYMENT-SERVICE
           predicates:
@@ -38,10 +41,6 @@ spring:
               args:
                 name: PAYMENT-SERVICE
                 fallbackuri: forward:/paymentServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: PRODUCT-SERVICE
           uri: lb://PRODUCT-SERVICE
           predicates:
@@ -52,10 +51,13 @@ spring:
               args:
                 name: PRODUCT-SERVICE
                 fallbackuri: forward:/productServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
+          #         Bypass   
+        - id : AUTH-SERVICE-TOKEN
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/user/**
+          filters:
+            - TokenFilter
 #         ROTAS COGNITO       
         - id : PAYMENT-SERVICE-COGNITO
           uri: lb://PAYMENT-SERVICE
@@ -78,13 +80,6 @@ spring:
           filters:
             - CognitoFilter
             - StripPrefix=1
-#         Bypass   
-        - id : AUTH-SERVICE-COGNITO
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/user/**
-          filters:
-            - BypassFilter
 #         ROTAS Okta       
         - id : PAYMENT-SERVICE-OKTA
           uri: lb://PAYMENT-SERVICE

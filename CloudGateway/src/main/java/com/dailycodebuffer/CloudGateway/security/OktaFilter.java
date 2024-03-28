@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.dailycodebuffer.CloudGateway.model.AuthorizeException;
-import com.dailycodebuffer.commons.utils.GwTokenUtil;
+import com.dailycodebuffer.CloudGateway.util.GwTokenUtil;
 import com.okta.jwt.AccessTokenVerifier;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerificationException;

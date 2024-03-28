@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+@ConditionalOnProperty(value = "enable.transaction.filter", havingValue = "true", matchIfMissing = false)
 public class TransactionalSecurityFilter implements Filter {
 	
 	private final String TOKEN = "token";
@@ -47,6 +49,7 @@ public class TransactionalSecurityFilter implements Filter {
 		}
 		boolean isGwToken = GwTokenUtil.validateGwToken(req);
 		if (isGwToken) {
+			log.info("Authorized and Called by Gateway");
 			chain.doFilter(request, response);
 			return;
 		}
