@@ -20,6 +20,7 @@ import com.dailycodebuffer.dto.ProductResponse;
 import com.dailycodebuffer.exception.CustomException;
 import com.dailycodebuffer.model.Order;
 import com.dailycodebuffer.repository.OrderRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -39,8 +40,16 @@ public class OrderServiceImpl implements OrderService {
 		// CANCELLED
 
 		log.info("Placing Order Request: {}", orderRequest);
-		
-//		productService.reduceQuantity(orderRequest.getProductId(), orderRequest.getQuantity());
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		headers.add("gw_token", GwTokenUtil.generateGwToken());
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		log.info("Invoking Product service to reduce the product id: {}", orderRequest.getProductId());
+		restTemplate.exchange("http://product-service-svc/product/reduceQuantity" + orderRequest.getProductId() + "?quantity" + orderRequest.getQuantity(), HttpMethod.PUT, entity, Object.class);
 
 		log.info("Creating Order with Status CREATED");
 		Order order = Order.builder().amount(orderRequest.getTotalAmount()).orderStatus("CREATED")
@@ -55,7 +64,10 @@ public class OrderServiceImpl implements OrderService {
 
 		String orderStatus = null;
 		try {
-//			paymentService.doPayment(paymentRequest);
+			String reqBodyData = new ObjectMapper().writeValueAsString(paymentRequest);
+			entity = new HttpEntity<>(reqBodyData, headers);
+			restTemplate.exchange("http://payment-service-svc/payment", HttpMethod.POST, entity, Object.class);
+			//			paymentService.doPayment(paymentRequest);
 			log.info("Payment done Successfully. Changing the Oder status to PLACED");
 			orderStatus = "PLACED";
 		} catch (Exception e) {
