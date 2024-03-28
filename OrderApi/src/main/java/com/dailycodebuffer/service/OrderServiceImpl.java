@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		headers.add("token", GwTokenUtil.generateGwToken());
+		headers.add("gw_token", GwTokenUtil.generateGwToken());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<String> entity = new HttpEntity<>(headers);
