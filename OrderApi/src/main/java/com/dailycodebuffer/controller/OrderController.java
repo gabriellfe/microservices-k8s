@@ -33,7 +33,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<?> getOrderDetails(@PathVariable long orderId) {
+    public ResponseEntity<?> getOrderDetails(@PathVariable long orderId) throws Exception {
         return new ResponseEntity<>(orderService.getOrderDetails(orderId), HttpStatus.OK);
     }
 }
