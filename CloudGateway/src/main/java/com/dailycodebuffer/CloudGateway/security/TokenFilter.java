@@ -48,6 +48,8 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 					UserDTO user = objectMapper.readValue(body, UserDTO.class);
 
 					String secret = (String) redisService.getValue("AUTH_" + user.getClient());
+					if (secret == null)
+						throw new AuthorizeException("Token invalid", HttpStatus.FORBIDDEN);
 					log.info("Secret in redis: [{}]", secret);
 					JWT.require(Algorithm.HMAC256(secret)).build().verify(exchange.getRequest().getHeaders().getFirst(TOKEN));
 					exchange.getRequest().mutate().header(GATEWAY_TOKEN, GwTokenUtil.generateGwToken());
