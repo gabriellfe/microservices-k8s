@@ -1,4 +1,4 @@
-package com.dailycodebuffer.utils;
+package com.dailycodebuffer.commons.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -10,8 +10,8 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -73,5 +73,4 @@ public class GwTokenUtil {
 			return null;
 		}
 	}
-
 }

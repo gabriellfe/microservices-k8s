@@ -4,7 +4,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.stereotype.Component;
 
-import com.dailycodebuffer.CloudGateway.utils.GwTokenUtil;
+import com.dailycodebuffer.CloudGateway.util.GwTokenUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

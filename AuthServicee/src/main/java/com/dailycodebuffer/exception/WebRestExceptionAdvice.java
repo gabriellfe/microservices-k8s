@@ -8,7 +8,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.dailycodebuffer.dto.ErrorMessage;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class WebRestExceptionAdvice {
 
 	@ExceptionHandler(value = AuthLoginException.class)
@@ -21,6 +24,7 @@ public class WebRestExceptionAdvice {
 	@ExceptionHandler(value = Exception.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ErrorMessage resourceException(Exception ex, WebRequest request) {
+		log.error("Error:", ex);
 		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.name(), String.valueOf(HttpStatus.BAD_REQUEST.value()));
 		return message;
 	}

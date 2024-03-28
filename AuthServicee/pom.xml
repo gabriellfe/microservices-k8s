@@ -20,6 +20,16 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.dailycodebuffer</groupId>
+			<artifactId>CommonsService</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -30,8 +40,6 @@
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
@@ -114,6 +122,20 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<distributionManagement>
+		<repository>
+			<id>nexusdeploymentrepo</id>
+			<name>Releases</name>
+			<url>
+				http://nexus.dev-ops-gabriellfe.com:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexusdeploymentrepo</id>
+			<name>Snapshots</name>
+			<url>
+				http://nexus.dev-ops-gabriellfe.com:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<build>
 		<plugins>
@@ -121,6 +143,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<classifier>exec</classifier>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

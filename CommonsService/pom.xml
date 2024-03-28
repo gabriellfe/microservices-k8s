@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.dailycodebuffer</groupId>
-	<artifactId>CloudGateway</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>CloudGateway</name>
+	<artifactId>CommonsService</artifactId>
+	<version>1.0.0</version>
+	<name>CommonsService</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -24,6 +24,10 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+		</dependency>
 		<!-- Spring boot Redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -34,26 +38,10 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.okta.jwt/okta-jwt-verifier -->
-		<dependency>
-			<groupId>com.okta.jwt</groupId>
-			<artifactId>okta-jwt-verifier</artifactId>
-			<version>0.5.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.okta.jwt</groupId>
-			<artifactId>okta-jwt-verifier-impl</artifactId>
-			<version>0.5.7</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
@@ -61,16 +49,24 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-config-client -->
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-config-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -82,10 +78,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
@@ -93,6 +85,11 @@
 			<artifactId>spring-cloud-starter-sleuth</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -103,21 +100,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -127,12 +109,6 @@
 			<groupId>com.okta.spring</groupId>
 			<artifactId>okta-spring-boot-starter</artifactId>
 			<version>2.1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 
 	</dependencies>
@@ -147,20 +123,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<distributionManagement>
-		<repository>
-			<id>nexusdeploymentrepo</id>
-			<name>Releases</name>
-			<url>
-				http://nexus.dev-ops-gabriellfe.com:8081/repository/maven-releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexusdeploymentrepo</id>
-			<name>Snapshots</name>
-			<url>
-				http://nexus.dev-ops-gabriellfe.com:8081/repository/maven-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<build>
 		<plugins>
@@ -179,5 +141,19 @@
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>nexusdeploymentrepo</id>
+			<name>Releases</name>
+			<url>
+				http://nexus.dev-ops-gabriellfe.com:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexusdeploymentrepo</id>
+			<name>Snapshots</name>
+			<url>
+				http://nexus.dev-ops-gabriellfe.com:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>

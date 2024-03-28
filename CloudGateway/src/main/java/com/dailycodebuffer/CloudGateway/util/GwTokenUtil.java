@@ -1,4 +1,4 @@
-package com.dailycodebuffer.CloudGateway.utils;
+package com.dailycodebuffer.CloudGateway.util;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -16,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class GwTokenUtil {
-	
+
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-mm-dd_HH");
 	private static final String GATEWAY_TOKEN = "gw_token";
-	
+
 	public static String generateGwToken() {
 		OffsetDateTime off = OffsetDateTime.now(ZoneOffset.UTC);
 		String secretKey = "prd" + "_" + off.format(FORMATTER);
@@ -46,7 +46,7 @@ public class GwTokenUtil {
 		cipher.init(cipherMode, secretKey);
 		return cipher;
 	}
-	
+
 	public static Boolean validateGwToken(HttpServletRequest req) {
 		if (req.getHeader(GATEWAY_TOKEN) == null) {
 			return false;
@@ -73,5 +73,4 @@ public class GwTokenUtil {
 			return null;
 		}
 	}
-
 }
