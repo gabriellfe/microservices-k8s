@@ -63,13 +63,13 @@ public class GwRestClientUtil {
 	public <T> T doRequest(String url, Object object, HttpMethod method, Class<?> clazz) throws Exception{
 		String body = this.mapper.writeValueAsString(object);
 		HttpEntity<String> entity = new HttpEntity<>(body, getHeaders());
-		return (T) restTemplate.exchange(url, method, entity, clazz);
+		return (T) restTemplate.exchange(url, method, entity, clazz).getBody();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <T> T doRequest(String url, HttpMethod method, Class<?> clazz) throws Exception{
 		HttpEntity<String> entity = new HttpEntity<>(getHeaders());
-		return (T) restTemplate.exchange(url, method, entity, clazz);
+		return (T) restTemplate.exchange(url, method, entity, clazz).getBody();
 	}
 
 }
