@@ -24,9 +24,6 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
 
-	@Autowired
-	private RestTemplate restTemplate;
-
 	@Override
 	public long placeOrder(OrderRequest orderRequest) {
 
@@ -70,7 +67,8 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderResponse getOrderDetails(long orderId) {
 		log.info("Get order details for Order Id : {}", orderId);
-
+		
+		RestTemplate restTemplate = new RestTemplate();
 		Order order = orderRepository.findById(orderId).orElseThrow(
 				() -> new CustomException("Order not found for the order Id:" + orderId, "NOT_FOUND", 404));
 
