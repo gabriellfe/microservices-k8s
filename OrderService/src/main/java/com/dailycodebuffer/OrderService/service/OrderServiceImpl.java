@@ -1,20 +1,13 @@
 package com.dailycodebuffer.OrderService.service;
 
 import java.time.Instant;
-import java.util.Collections;
 
-import org.apache.http.HttpEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.dailycodebuffer.OrderService.entity.Order;
 import com.dailycodebuffer.OrderService.exception.CustomException;
-import com.dailycodebuffer.OrderService.external.client.PaymentService;
-import com.dailycodebuffer.OrderService.external.client.ProductService;
 import com.dailycodebuffer.OrderService.external.request.PaymentRequest;
 import com.dailycodebuffer.OrderService.external.response.PaymentResponse;
 import com.dailycodebuffer.OrderService.model.OrderRequest;
@@ -32,12 +25,6 @@ public class OrderServiceImpl implements OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private ProductService productService;
-
-	@Autowired
-	private PaymentService paymentService;
-
-	@Autowired
 	private RestTemplate restTemplate;
 
 	@Override
@@ -50,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
 
 		log.info("Placing Order Request: {}", orderRequest);
 		
-		productService.reduceQuantity(orderRequest.getProductId(), orderRequest.getQuantity());
+//		productService.reduceQuantity(orderRequest.getProductId(), orderRequest.getQuantity());
 
 		log.info("Creating Order with Status CREATED");
 		Order order = Order.builder().amount(orderRequest.getTotalAmount()).orderStatus("CREATED")
@@ -65,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
 		String orderStatus = null;
 		try {
-			paymentService.doPayment(paymentRequest);
+//			paymentService.doPayment(paymentRequest);
 			log.info("Payment done Successfully. Changing the Oder status to PLACED");
 			orderStatus = "PLACED";
 		} catch (Exception e) {
