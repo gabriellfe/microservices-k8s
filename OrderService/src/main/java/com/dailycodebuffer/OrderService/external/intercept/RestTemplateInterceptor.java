@@ -1,15 +1,14 @@
 package com.dailycodebuffer.OrderService.external.intercept;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
-import com.dailycodebuffer.OrderService.utils.GwTokenUtil;
-
-import java.io.IOException;
+import com.dailycodebuffer.commons.utils.GwTokenUtil;
 
 public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
