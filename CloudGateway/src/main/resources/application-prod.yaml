@@ -18,7 +18,7 @@ spring:
         - id : AUTH-SERVICE-BYPASS
           uri: http://auth-service-svc
           predicates:
-            - Path=/user/login
+            - Path=/user/**
           filters:
             - BypassFilter
         - id : ORDER-SERVICE
@@ -51,13 +51,6 @@ spring:
               args:
                 name: PRODUCT-SERVICE
                 fallbackuri: forward:/productServiceFallBack
-#         Bypass   
-        - id : AUTH-SERVICE
-          uri: http://auth-service-svc
-          predicates:
-            - Path=/user/**
-          filters:
-            - TokenFilter
 #         ROTAS COGNITO       
         - id : PAYMENT-SERVICE-COGNITO
           uri: http://payment-service-svc
