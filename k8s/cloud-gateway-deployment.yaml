@@ -22,15 +22,15 @@ spec:
         image: gabriellfe/cloudservice:IMAGE_URL
         imagePullPolicy: Always
         readinessProbe:
-          initialDelaySeconds: 180
-          periodSeconds: 180
+          initialDelaySeconds: 60
+          periodSeconds: 60
           successThreshold: 1
           httpGet:
             path: /livenessProbe
             port: 9090
         livenessProbe:
-          initialDelaySeconds: 180
-          periodSeconds: 180
+          initialDelaySeconds: 60
+          periodSeconds: 60
           successThreshold: 1
           httpGet:
             path: /livenessProbe

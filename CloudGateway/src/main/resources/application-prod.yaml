@@ -8,7 +8,7 @@ spring:
     password: root
     driverClassName: com.mysql.cj.jdbc.Driver
   application:
-    name: API-GATEWAY
+    name: cloud-gateway
   config:
       import: configserver:${CONFIG_SERVER_URL:http://localhost:9296}
   cloud:
@@ -88,11 +88,11 @@ spring:
 #    client-secret: eI2THAvlUfCzwaezyagi2HUOQ1H7KccHgUTfLjF6NHuMrfZmHdyowcP4rmqF_SDq
 #    scopes: openid, email, profile, offline_access
 #    
-#eureka:
-#  instance:
-#    prefer-ip-address: true
-#  client:
-#    fetch-registry: true
-#    register-with-eureka: true
-#    service-url:
-#      defaultZone: ${EUREKA_SERVER_ADDRESS:http://eureka:8761/eureka}
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://eureka:8761/eureka}
