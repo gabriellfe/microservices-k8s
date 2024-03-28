@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		log.info("Invoking Product service to reduce the product id: {}", orderRequest.getProductId());
-		restTemplate.exchange("http://product-service-svc/product/reduceQuantity/" + orderRequest.getProductId() + "?quantity" + orderRequest.getQuantity(), HttpMethod.PUT, entity, Object.class);
+		restTemplate.exchange("http://product-service-svc/product/reduceQuantity/" + orderRequest.getProductId() + "?quantity=" + orderRequest.getQuantity(), HttpMethod.PUT, entity, Object.class);
 
 		log.info("Creating Order with Status CREATED");
 		Order order = Order.builder().amount(orderRequest.getTotalAmount()).orderStatus("CREATED")
