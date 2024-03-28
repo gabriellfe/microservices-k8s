@@ -1,11 +1,17 @@
 package com.dailycodebuffer.service;
 
 import java.time.Instant;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.dailycodebuffer.commons.utils.GwTokenUtil;
 import com.dailycodebuffer.dto.OrderRequest;
 import com.dailycodebuffer.dto.OrderResponse;
 import com.dailycodebuffer.dto.PaymentRequest;
@@ -69,16 +75,21 @@ public class OrderServiceImpl implements OrderService {
 		log.info("Get order details for Order Id : {}", orderId);
 		
 		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		headers.add("token", GwTokenUtil.generateGwToken());
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
 		Order order = orderRepository.findById(orderId).orElseThrow(
 				() -> new CustomException("Order not found for the order Id:" + orderId, "NOT_FOUND", 404));
-
+		
 		log.info("Invoking Product service to fetch the product for id: {}", order.getProductId());
-		ProductResponse productResponse = restTemplate
-				.getForObject("http://PRODUCT-SERVICE/product/" + order.getProductId(), ProductResponse.class);
+		ProductResponse productResponse = restTemplate.exchange("http://product-service-svc/product/" + order.getProductId(), HttpMethod.GET, entity, ProductResponse.class).getBody();
 
 		log.info("Getting payment information form the payment Service");
-		PaymentResponse paymentResponse = restTemplate
-				.getForObject("http://PAYMENT-SERVICE/payment/order/" + order.getId(), PaymentResponse.class);
+		PaymentResponse paymentResponse = restTemplate.exchange("http://payment-service-svc/payment/order/" + order.getId(), HttpMethod.GET, entity, PaymentResponse.class).getBody();
 
 		OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
 				.productName(productResponse.getProductName()).productId(productResponse.getProductId()).build();
