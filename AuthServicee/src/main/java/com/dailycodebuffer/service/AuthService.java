@@ -57,6 +57,7 @@ public class AuthService {
 		Algorithm algo = Algorithm.HMAC256(secretKey);
 		long nowsec = Calendar.getInstance().getTime().getTime() / 1000;
 		redisService.setValue("AUTH_" + user.getEmail(), secretKey, TimeUnit.MINUTES, 30, false);
+		log.info("Sucess on client login [{}]", user.getEmail());
 		return jwtBuilder.withClaim("EXP", nowsec + 100000).withClaim("client", user.getEmail()).sign(algo);
 	}
 

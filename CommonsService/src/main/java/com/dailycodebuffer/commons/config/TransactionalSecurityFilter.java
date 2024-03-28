@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @ConditionalOnProperty(value = "enable.transaction.filter", havingValue = "true", matchIfMissing = false)
+@Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class TransactionalSecurityFilter implements Filter {
 	
 	private final String TOKEN = "token";
@@ -39,7 +42,11 @@ public class TransactionalSecurityFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		if (req.getRequestURI().contains("/actuator")) {
+		if (req.getRequestURI().contains("/livenessProbe")) {
+			chain.doFilter(request, response);
+			return;
+		}
+		if (req.getRequestURI().contains("/actuator/**")) {
 			chain.doFilter(request, response);
 			return;
 		}
