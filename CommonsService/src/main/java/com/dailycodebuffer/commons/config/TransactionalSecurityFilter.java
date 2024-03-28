@@ -39,7 +39,11 @@ public class TransactionalSecurityFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		if (req.getRequestURI().contains("/actuator")) {
+		if (req.getRequestURI().contains("/livenessProbe")) {
+			chain.doFilter(request, response);
+			return;
+		}
+		if (req.getRequestURI().contains("/actuator/**")) {
 			chain.doFilter(request, response);
 			return;
 		}
