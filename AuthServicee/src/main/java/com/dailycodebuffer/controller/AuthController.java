@@ -27,6 +27,4 @@ public class AuthController {
 		authservice.createUser(loginRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
-
-
 }
