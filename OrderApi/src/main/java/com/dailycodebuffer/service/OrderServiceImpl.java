@@ -43,13 +43,14 @@ public class OrderServiceImpl implements OrderService {
 
 		order = orderRepository.save(order);
 
-		log.info("Calling Payment Service to complete the payment");
+		String urlPayment = "http://payment-service-svc/payment";
+		log.info("Calling Payment Service to complete the payment: [{}]", urlPayment);
 		PaymentRequest paymentRequest = PaymentRequest.builder().orderId(order.getId())
 				.paymentMode(orderRequest.getPaymentMode()).amount(orderRequest.getTotalAmount()).build();
 
 		String orderStatus = null;
 		try {
-			GwRestClientUtil.getInstance().jsonPost("http://payment-service-svc/payment", paymentRequest, Object.class);
+			GwRestClientUtil.getInstance().jsonPost("urlPayment", paymentRequest, Object.class);
 			log.info("Payment done Successfully. Changing the Oder status to PLACED");
 			orderStatus = "PLACED";
 		} catch (Exception e) {
@@ -70,12 +71,13 @@ public class OrderServiceImpl implements OrderService {
 		
 		Order order = orderRepository.findById(orderId).orElseThrow(
 				() -> new CustomException("Order not found for the order Id:" + orderId, "NOT_FOUND", 404));
-		
-		log.info("Invoking Product service to fetch the product for id: {}", order.getProductId());
-		ProductResponse productResponse = GwRestClientUtil.getInstance().jsonGet("http://product-service-svc/product/" + order.getProductId(), ProductResponse.class);
+		String urlProduct = "http://product-service-svc/product/" + order.getProductId();
+		log.info("Invoking Product service [{}] to fetch the product for id: {}", urlProduct,  order.getProductId());
+		ProductResponse productResponse = GwRestClientUtil.getInstance().jsonGet(urlProduct, ProductResponse.class);
 
-		log.info("Getting payment information form the payment Service");
-		PaymentResponse paymentResponse = GwRestClientUtil.getInstance().jsonGet("http://payment-service-svc/payment/order/" + order.getId(), PaymentResponse.class);
+		String urlPayment = "http://payment-service-svc/payment/order/" + order.getId();
+		log.info("Getting payment information from the payment Service [{}]", urlPayment);
+		PaymentResponse paymentResponse = GwRestClientUtil.getInstance().jsonGet(urlPayment, PaymentResponse.class);
 
 		OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
 				.productName(productResponse.getProductName()).productId(productResponse.getProductId()).build();
