@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,13 +19,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.commons.dto.UserDTO;
 import com.dailycodebuffer.commons.service.RedisService;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
 import com.dailycodebuffer.exception.AuthLoginException;
 import com.dailycodebuffer.model.Usuario;
 import com.dailycodebuffer.repository.UsuarioRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Hashing;
 
@@ -42,7 +40,7 @@ public class AuthService {
 	@Autowired
 	private RedisService redisService;
 
-	public String doLogin(LoginRequestDTO login) {
+	public TokenDto doLogin(LoginRequestDTO login) {
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 
 		Usuario user = usuarioRepository.findByEmail(login.getLogin());
@@ -54,7 +52,7 @@ public class AuthService {
 			log.error("Password Dont match");
 			throw new AuthLoginException("Password do not match");
 		}
-		return this.generateToken(user);
+		return new TokenDto(this.generateToken(user));
 	}
 
 	public void createUser(UsuarioRequestDTO login) {
@@ -95,12 +93,13 @@ public class AuthService {
 		return result;
 	}
 
-	public void refreshLogin(String token) {
+	public TokenDto refreshLogin(String token) {
 		try {
 			if (!this.validateAuthorization(token)) {
 				throw new AuthLoginException("Token invalid");
 			}
-			this.generateToken(usuarioRepository.findByEmail(this.decode(token).getClient()));
+			String jwtToken = this.generateToken(usuarioRepository.findByEmail(this.decode(token).getClient()));
+			return new TokenDto(jwtToken);
 		} catch (Exception e) {
 			throw new AuthLoginException("Token invalid");
 		}

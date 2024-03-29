@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
 import com.dailycodebuffer.service.AuthService;
 
@@ -19,7 +20,7 @@ public class AuthController {
 	private AuthService authservice;
 	
 	@PostMapping(value = "/user/login")
-	public ResponseEntity<String> doLogin(@RequestBody LoginRequestDTO loginRequestDto){
+	public ResponseEntity<TokenDto> doLogin(@RequestBody LoginRequestDTO loginRequestDto){
 		return ResponseEntity.ok(authservice.doLogin(loginRequestDto));
 	}
 	
@@ -30,7 +31,7 @@ public class AuthController {
 	}
 	
 	@PostMapping(value = "/refresh")
-	public ResponseEntity<String> refresh(@RequestHeader(value = "token") String token){
+	public ResponseEntity<TokenDto> refresh(@RequestHeader(value = "token") String token){
 		authservice.refreshLogin(token);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
