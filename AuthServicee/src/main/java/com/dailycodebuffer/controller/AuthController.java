@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dailycodebuffer.dto.LoginRequestDTO;
@@ -26,5 +27,11 @@ public class AuthController {
 	public ResponseEntity<String> createUser(@RequestBody UsuarioRequestDTO loginRequestDto){
 		authservice.createUser(loginRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping(value = "/refresh")
+	public ResponseEntity<String> refresh(@RequestHeader(value = "token") String token){
+		authservice.refreshLogin(token);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
