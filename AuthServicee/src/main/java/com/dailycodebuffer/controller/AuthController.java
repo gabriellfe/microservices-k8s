@@ -32,19 +32,19 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
-	@PostMapping(value = "/refresh")
+	@PostMapping(value = "/user/refresh")
 	public ResponseEntity<TokenDto> refresh(@RequestHeader(value = "token") String token){
 		authservice.refreshLogin(token);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
-	@PostMapping(value = "/logout")
+	@PostMapping(value = "/user/logout")
 	public ResponseEntity<?> logout(@RequestHeader(value = "token") String token) throws Exception{
 		authservice.logout(token);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
-	@PostMapping(value = "/ticket")
+	@PostMapping(value = "/user/ticket")
 	public ResponseEntity<?> generateTicket(@RequestBody GenerateTicketDto generateTicketDto){
 		authservice.geraCodigoRedefinicao(generateTicketDto);
 		return ResponseEntity.status(HttpStatus.OK).build();
