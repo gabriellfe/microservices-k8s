@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.ResponseTicketDto;
 import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
@@ -47,10 +48,11 @@ public class AuthController {
 	@PostMapping(value = "/user/ticket")
 	public ResponseEntity<?> generateTicket(@RequestBody GenerateTicketDto generateTicketDto){
 		authservice.geraCodigoRedefinicao(generateTicketDto);
-		return ResponseEntity.ok(authservice.geraCodigoRedefinicao(generateTicketDto));
+		Long ticket = authservice.geraCodigoRedefinicao(generateTicketDto);
+		return ResponseEntity.ok(new ResponseTicketDto(ticket));
 	}
 	
-	@PostMapping(value = "/change-password")
+	@PostMapping(value = "/user/change-password")
 	public ResponseEntity<TokenDto> changePassword(@RequestBody TicketDto ticketDto){
 		authservice.changePassword(ticketDto);
 		return ResponseEntity.status(HttpStatus.OK).build();
