@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.mail.internet.AddressException;
@@ -18,11 +19,15 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.commons.dto.UserDTO;
 import com.dailycodebuffer.commons.service.RedisService;
+import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
 import com.dailycodebuffer.exception.AuthLoginException;
+import com.dailycodebuffer.model.TicketRedefinicao;
 import com.dailycodebuffer.model.Usuario;
+import com.dailycodebuffer.repository.TicketRedefinicaoRepository;
 import com.dailycodebuffer.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +41,9 @@ public class AuthService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private TicketRedefinicaoRepository ticketRedefinicaoRepository;
 	
 	@Autowired
 	private RedisService redisService;
@@ -138,5 +146,57 @@ public class AuthService {
 		String body = new String(Base64.getDecoder().decode(base64EncodedBody));
 		ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return objectMapper.readValue(body, UserDTO.class);
+	}
+	
+	public Long geraCodigoRedefinicao(GenerateTicketDto generateTicketDto){
+		Usuario user = usuarioRepository.findByEmail(generateTicketDto.getEmail());
+		TicketRedefinicao ticket = new TicketRedefinicao();
+		ticket.setDtCriacao(Instant.now());
+		ticket.setIdUsuario(user.getId());
+		ticket.setTicket(this.generateTicket());
+		ticket.setEsValido("S");
+		ticketRedefinicaoRepository.save(ticket);
+		return 1l;
+	}
+	
+	private Long generateTicket() {
+		Random random = new Random();
+		char[] digits = new char[6];
+		digits[0] = (char) (random.nextInt(9) + '1');
+		for (int i = 1; i < 6; i++) {
+			digits[i] = (char) (random.nextInt(10) + '0');
+		}
+		return Long.parseLong(new String(digits));
+	}
+
+	public void logout(String token) throws Exception {
+		if (token != null) {
+			UserDTO user = decode(token);
+			redisService.removeKey("AUTH_" + user.getClient());
+		}
+	}
+
+	public void changePassword(TicketDto ticketDto) {
+		Usuario user = this.validateTicket(ticketDto.getEmail(), ticketDto.getTicket());
+		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+		user.setPassword(bcrypt.encode(ticketDto.getPassword()));
+		usuarioRepository.save(user);
+	}
+
+	private Usuario validateTicket(String email, Long ticket) {
+		Usuario user = usuarioRepository.findByEmail(email);
+		if (user == null)
+			throw new AuthLoginException();
+		
+		TicketRedefinicao ticketRedefinicao = ticketRedefinicaoRepository.findByIdUsuarioAndTicket(user.getId(), ticket);
+		
+		if (ticketRedefinicao == null)
+			throw new AuthLoginException();
+		
+		if (ticketRedefinicao.getEsValido().equals("N"))
+			throw new AuthLoginException();
+		ticketRedefinicao.setEsValido("N");
+		ticketRedefinicaoRepository.save(ticketRedefinicao);
+		return user;
 	}
 }

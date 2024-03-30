@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
 import com.dailycodebuffer.service.AuthService;
@@ -33,6 +35,24 @@ public class AuthController {
 	@PostMapping(value = "/refresh")
 	public ResponseEntity<TokenDto> refresh(@RequestHeader(value = "token") String token){
 		authservice.refreshLogin(token);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	@PostMapping(value = "/logout")
+	public ResponseEntity<?> logout(@RequestHeader(value = "token") String token) throws Exception{
+		authservice.logout(token);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	@PostMapping(value = "/ticket")
+	public ResponseEntity<?> generateTicket(@RequestBody GenerateTicketDto generateTicketDto){
+		authservice.geraCodigoRedefinicao(generateTicketDto);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	@PostMapping(value = "/change-password")
+	public ResponseEntity<TokenDto> changePassword(@RequestBody TicketDto ticketDto){
+		authservice.changePassword(ticketDto);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
