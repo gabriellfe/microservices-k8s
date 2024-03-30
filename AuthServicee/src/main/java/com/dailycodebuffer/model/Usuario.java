@@ -1,6 +1,7 @@
 package com.dailycodebuffer.model;
 
 import java.time.Instant;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,10 +36,25 @@ public class Usuario {
 
     @Column(name = "PASSWORD")
     private String password;
-
-    @Column(name = "SECRET")
-    private String secret;
     
+    @Column(name = "NASCIMENTO")
+    private Date nascimento;
+    
+    @Column(name = "CPF")
+    private String cpf;
+    
+    @Column(name = "TELEFONE")
+    private String telefone;
+    
+    @Column(name = "CIDATE")
+    private String cidade;
+    
+    @Column(name = "ESTADO")
+    private String estado;
+    
+    @Column(name = "GENERO")
+    private String genero;
+
     @Column(name = "DT_CRIACAO")
     private Instant dtCriacao;
 

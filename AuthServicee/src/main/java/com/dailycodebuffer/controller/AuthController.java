@@ -3,6 +3,7 @@ package com.dailycodebuffer.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.PerfilDto;
 import com.dailycodebuffer.dto.ResponseTicketDto;
 import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
@@ -56,5 +58,10 @@ public class AuthController {
 	public ResponseEntity<TokenDto> changePassword(@RequestBody TicketDto ticketDto){
 		authservice.changePassword(ticketDto);
 		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	@GetMapping(value = "/user/perfil")
+	public ResponseEntity<PerfilDto> getPerfil(@RequestHeader(value = "token") String token) throws Exception{
+		return ResponseEntity.ok(authservice.getPerfil(token));
 	}
 }

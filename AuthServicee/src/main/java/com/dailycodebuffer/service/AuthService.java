@@ -21,6 +21,7 @@ import com.dailycodebuffer.commons.dto.UserDTO;
 import com.dailycodebuffer.commons.service.RedisService;
 import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.PerfilDto;
 import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
@@ -85,8 +86,14 @@ public class AuthService {
 		user = new Usuario();
 		user.setDtCriacao(Instant.now());
 		user.setEmail(login.getEmail());
-		user.setName(login.getName());
-		user.setPassword(bcrypt.encode(login.getPassword()));
+		user.setName(login.getNome());
+		user.setCidade(login.getCidade());
+		user.setCpf(login.getCpf());
+		user.setEstado(login.getEstado());
+		user.setGenero(login.getGenero());
+		user.setTelefone(login.getTelefone());
+		user.setNascimento(login.getNascimento());
+		user.setPassword(bcrypt.encode(login.getSenha()));
 		usuarioRepository.save(user);
 	}
 
@@ -198,5 +205,19 @@ public class AuthService {
 		ticketRedefinicao.setEsValido("N");
 		ticketRedefinicaoRepository.save(ticketRedefinicao);
 		return user;
+	}
+
+	public PerfilDto getPerfil(String token) throws Exception {
+		Usuario user = usuarioRepository.findByEmail(this.decode(token).getClient());
+		PerfilDto response = new PerfilDto();
+		response.setNome(user.getName());
+		response.setCidade(user.getCidade());
+		response.setCpf(user.getCpf());
+		response.setEmail(user.getEmail());
+		response.setEstado(user.getEstado());
+		response.setGenero(user.getGenero());
+		response.setNascimento(user.getNascimento());
+		response.setTelefone(user.getTelefone());
+		return response;
 	}
 }
