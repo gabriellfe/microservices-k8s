@@ -155,8 +155,8 @@ public class AuthService {
 		ticket.setIdUsuario(user.getId());
 		ticket.setTicket(this.generateTicket());
 		ticket.setEsValido("S");
-		ticketRedefinicaoRepository.save(ticket);
-		return 1l;
+		ticket = ticketRedefinicaoRepository.save(ticket);
+		return ticket.getTicket();
 	}
 	
 	private Long generateTicket() {

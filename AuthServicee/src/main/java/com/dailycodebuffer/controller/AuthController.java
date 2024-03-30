@@ -47,7 +47,7 @@ public class AuthController {
 	@PostMapping(value = "/user/ticket")
 	public ResponseEntity<?> generateTicket(@RequestBody GenerateTicketDto generateTicketDto){
 		authservice.geraCodigoRedefinicao(generateTicketDto);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.ok(authservice.geraCodigoRedefinicao(generateTicketDto));
 	}
 	
 	@PostMapping(value = "/change-password")
