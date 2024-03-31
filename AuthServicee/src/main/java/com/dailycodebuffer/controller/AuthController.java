@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dailycodebuffer.dto.EditaPerfilDto;
 import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
 import com.dailycodebuffer.dto.PerfilDto;
@@ -67,7 +68,7 @@ public class AuthController {
 	}
 	
 	@PutMapping(value = "/user/perfil")
-	public ResponseEntity<PerfilDto> editaPerfil(@RequestHeader(value = "token") String token,@RequestBody PerfilDto perfil) throws Exception{
+	public ResponseEntity<PerfilDto> editaPerfil(@RequestHeader(value = "token") String token,@RequestBody EditaPerfilDto perfil) throws Exception{
 		authservice.editaPerfil(perfil, token);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
