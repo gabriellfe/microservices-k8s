@@ -223,7 +223,6 @@ public class AuthService {
 	}
 
 	public void editaPerfil(EditaPerfilDto perfil, String token) throws Exception {
-		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 		String email = this.decode(token).getClient();
 		Usuario user = usuarioRepository.findByEmail(email);
 		
@@ -238,7 +237,6 @@ public class AuthService {
 		user.setGenero(perfil.getGenero());
 		user.setNascimento(perfil.getNascimento());
 		user.setTelefone(perfil.getTelefone());
-		user.setPassword(bcrypt.encode(perfil.getSenha()));
 		usuarioRepository.save(user);
 	}
 }
