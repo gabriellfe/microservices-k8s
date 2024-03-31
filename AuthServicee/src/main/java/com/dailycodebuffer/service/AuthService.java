@@ -20,6 +20,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.commons.dto.UserDTO;
 import com.dailycodebuffer.commons.service.RedisService;
 import com.dailycodebuffer.dto.EditaPerfilDto;
+import com.dailycodebuffer.dto.EstadoDto;
 import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
 import com.dailycodebuffer.dto.PerfilDto;
@@ -27,6 +28,7 @@ import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
 import com.dailycodebuffer.exception.AuthLoginException;
+import com.dailycodebuffer.model.Estado;
 import com.dailycodebuffer.model.TicketRedefinicao;
 import com.dailycodebuffer.model.Usuario;
 import com.dailycodebuffer.repository.TicketRedefinicaoRepository;
@@ -49,6 +51,9 @@ public class AuthService {
 	
 	@Autowired
 	private RedisService redisService;
+	
+	@Autowired
+	private EstadoService estadoService;
 
 	public TokenDto doLogin(LoginRequestDTO login) {
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
@@ -90,7 +95,7 @@ public class AuthService {
 		user.setName(login.getNome());
 		user.setCidade(login.getCidade());
 		user.setCpf(login.getCpf());
-		user.setEstado(login.getEstado());
+		user.setEstado(login.getEstado().getSigla());
 		user.setGenero(login.getGenero());
 		user.setTelefone(login.getTelefone());
 		user.setNascimento(login.getNascimento());
@@ -210,15 +215,17 @@ public class AuthService {
 
 	public PerfilDto getPerfil(String token) throws Exception {
 		Usuario user = usuarioRepository.findByEmail(this.decode(token).getClient());
+		Estado estado = estadoService.findBySigla(user.getEstado());
 		PerfilDto response = new PerfilDto();
 		response.setNome(user.getName());
 		response.setCidade(user.getCidade());
 		response.setCpf(user.getCpf());
 		response.setEmail(user.getEmail());
-		response.setEstado(user.getEstado());
 		response.setGenero(user.getGenero());
 		response.setNascimento(user.getNascimento());
 		response.setTelefone(user.getTelefone());
+		EstadoDto dtoEstado = new EstadoDto(estado.getId(), estado.getSigla(), estado.getNome());
+		response.setEstado(dtoEstado);
 		return response;
 	}
 

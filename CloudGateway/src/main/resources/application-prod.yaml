@@ -14,6 +14,13 @@ spring:
   cloud:
     gateway:
       routes:
+#         Estados   
+        - id : AUTH-SERVICE-ESTADOS
+          uri: http://auth-service-svc
+          predicates:
+            - Path=/estados
+          filters:
+            - BypassFilter
 #         Auth   
         - id : AUTH-SERVICE-PERFIL
           uri: http://auth-service-svc

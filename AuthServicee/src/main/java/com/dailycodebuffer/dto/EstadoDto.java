@@ -1,7 +1,5 @@
 package com.dailycodebuffer.dto;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,15 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PerfilDto {
+public class EstadoDto {
 	
-	private String email;
+	private Long id;
+	private String sigla;
 	private String nome;
-	private Date nascimento;
-	private String telefone;
-	private String genero;
-	private EstadoDto estado;
-	private String cidade;
-	private String cpf;
 
 }
