@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dailycodebuffer.dto.ProductRequest;
 import com.dailycodebuffer.dto.ProductResponse;
+import com.dailycodebuffer.model.Promocao;
 import com.dailycodebuffer.service.ProductService;
 
 @RestController
@@ -22,6 +23,17 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    
+    @GetMapping
+    public ResponseEntity<?> getProduct() {
+        return new ResponseEntity<>(productService.listAll(), HttpStatus.OK);
+    }
+    
+    @PostMapping
+    public ResponseEntity<?> addPromocao(@RequestBody Promocao promo) {
+    	productService.addPromocao(promo);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<Long> addProduct(@RequestBody ProductRequest productRequest) {

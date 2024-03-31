@@ -94,6 +94,14 @@ spring:
           filters:
             - CognitoFilter
             - StripPrefix=1
+#         ROTAS COM PATH       
+        - id : PRODUCT-SERVICE-PATH
+          uri: http://product-service-svc
+          predicates:
+            - Path=/api-product/**
+          filters:
+            - TokenFilter
+            - StripPrefix=1      
 #okta:
 #  oauth2:
 #    issuer: https://dev-56986490.okta.com/oauth2/default
