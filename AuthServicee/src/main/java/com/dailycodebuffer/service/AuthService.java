@@ -19,6 +19,7 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.commons.dto.UserDTO;
 import com.dailycodebuffer.commons.service.RedisService;
+import com.dailycodebuffer.dto.EditaPerfilDto;
 import com.dailycodebuffer.dto.GenerateTicketDto;
 import com.dailycodebuffer.dto.LoginRequestDTO;
 import com.dailycodebuffer.dto.PerfilDto;
@@ -219,5 +220,25 @@ public class AuthService {
 		response.setNascimento(user.getNascimento());
 		response.setTelefone(user.getTelefone());
 		return response;
+	}
+
+	public void editaPerfil(EditaPerfilDto perfil, String token) throws Exception {
+		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+		String email = this.decode(token).getClient();
+		Usuario user = usuarioRepository.findByEmail(email);
+		
+		if (!user.getEmail().equals(perfil.getEmail()) && usuarioRepository.findByEmail(perfil.getEmail()) != null) {
+			throw new AuthLoginException();
+		}
+		user.setName(perfil.getNome());
+		user.setCidade(perfil.getCidade());
+		user.setCpf(perfil.getCpf());
+		user.setEmail(perfil.getEmail());
+		user.setEstado(perfil.getEstado());
+		user.setGenero(perfil.getGenero());
+		user.setNascimento(perfil.getNascimento());
+		user.setTelefone(perfil.getTelefone());
+		user.setPassword(bcrypt.encode(perfil.getSenha()));
+		usuarioRepository.save(user);
 	}
 }
