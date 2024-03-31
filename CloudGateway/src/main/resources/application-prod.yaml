@@ -14,6 +14,20 @@ spring:
   cloud:
     gateway:
       routes:
+#         Auth   
+        - id : AUTH-SERVICE-PERFIL
+          uri: http://auth-service-svc
+          predicates:
+            - Path=/user/perfil
+          filters:
+            - TokenFilter
+#         Auth   
+        - id : AUTH-SERVICE-REFRESH
+          uri: http://auth-service-svc
+          predicates:
+            - Path=/user/refresh
+          filters:
+            - TokenFilter
 #         Bypass   
         - id : AUTH-SERVICE-BYPASS
           uri: http://auth-service-svc
