@@ -240,7 +240,7 @@ public class AuthService {
 		user.setCidade(perfil.getCidade());
 		user.setCpf(perfil.getCpf());
 		user.setEmail(perfil.getEmail());
-		user.setEstado(perfil.getEstado());
+		user.setEstado(perfil.getEstado().getSigla());
 		user.setGenero(perfil.getGenero());
 		user.setNascimento(perfil.getNascimento());
 		user.setTelefone(perfil.getTelefone());

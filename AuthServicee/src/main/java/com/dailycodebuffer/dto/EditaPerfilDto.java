@@ -18,7 +18,7 @@ public class EditaPerfilDto {
 	private Date nascimento;
 	private String telefone;
 	private String genero;
-	private String estado;
+	private EstadoDto estado;
 	private String cidade;
 	private String cpf;
 	private String senha;
