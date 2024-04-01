@@ -28,5 +28,5 @@ public class Depoimento {
     private String autor;
 
     @Column(name = "AVATAR")
-    private BigDecimal avatar;
+    private String avatar;
 }
