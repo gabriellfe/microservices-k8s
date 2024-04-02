@@ -1,5 +1,6 @@
 package com.dailycodebuffer.commons.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(value = "enable.s3", havingValue = "true", matchIfMissing = false)
 public class S3Config {
 	
+	@Autowired
+	private S3Properties prop;
+	
 	public AWSCredentials credentials() {
         AWSCredentials credentials = new BasicAWSCredentials(
-                "AKIAS4WBSGOAMAY2EYSA",
-                "mKbJN6EAYQVLod1BkNq701FGhHL0851YveVQ/isL"
+        		prop.getHost(),
+        		prop.getPass()
         );
         return credentials;
     }
