@@ -1,5 +1,7 @@
 package com.dailycodebuffer.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import com.dailycodebuffer.dto.ResponseTicketDto;
 import com.dailycodebuffer.dto.TicketDto;
 import com.dailycodebuffer.dto.TokenDto;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
+import com.dailycodebuffer.model.Usuario;
 import com.dailycodebuffer.service.AuthService;
 
 @RestController
@@ -71,5 +74,10 @@ public class AuthController {
 	public ResponseEntity<PerfilDto> editaPerfil(@RequestHeader(value = "token") String token,@RequestBody EditaPerfilDto perfil) throws Exception{
 		authservice.editaPerfil(perfil, token);
 		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	@GetMapping(value = "/user/client")
+	public ResponseEntity<List<Usuario>> editaPerfil() throws Exception{
+		return ResponseEntity.ok(authservice.getClients());
 	}
 }

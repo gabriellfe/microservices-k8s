@@ -1,0 +1,41 @@
+package com.dailycodebuffer.commons.config;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Configuration
+@Slf4j
+@ConditionalOnProperty(value = "enable.s3", havingValue = "true", matchIfMissing = false)
+public class S3Config {
+	
+	public AWSCredentials credentials() {
+        AWSCredentials credentials = new BasicAWSCredentials(
+                "AKIAS4WBSGOAMAY2EYSA",
+                "mKbJN6EAYQVLod1BkNq701FGhHL0851YveVQ/isL"
+        );
+        return credentials;
+    }
+
+    @Bean
+    public AmazonS3 amazonS3() {
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials()))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
+        return s3client;
+
+    }
+
+}

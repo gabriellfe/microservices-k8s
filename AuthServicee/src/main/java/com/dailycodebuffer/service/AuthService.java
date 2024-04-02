@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -245,5 +246,10 @@ public class AuthService {
 		user.setNascimento(perfil.getNascimento());
 		user.setTelefone(perfil.getTelefone());
 		usuarioRepository.save(user);
+	}
+
+	public List<Usuario> getClients() {
+		return usuarioRepository.findAll();
+		
 	}
 }
