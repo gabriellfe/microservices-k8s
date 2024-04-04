@@ -62,6 +62,12 @@ spring:
               args:
                 name: PAYMENT-SERVICE
                 fallbackuri: forward:/paymentServiceFallBack
+        - id: CLIENT-MANAGEMENT-SERVICE
+          uri: http://client-management-service-svc
+          predicates:
+            - Path=/client/**
+          filters:
+            - TokenFilter
         - id: PRODUCT-SERVICE
           uri: http://product-service-svc
           predicates:
