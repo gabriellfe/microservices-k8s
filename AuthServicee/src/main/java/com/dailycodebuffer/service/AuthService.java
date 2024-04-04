@@ -12,6 +12,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class AuthService {
+	
+	@Value("enable.redis")
+	private boolean redisEnable;
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -149,7 +153,12 @@ public class AuthService {
 		JWTCreator.Builder jwtBuilder = JWT.create();
 		Algorithm algo = Algorithm.HMAC256(secretKey);
 		long nowsec = Calendar.getInstance().getTime().getTime() / 1000;
-		redisService.setValue("AUTH_" + user.getEmail(), secretKey, TimeUnit.MINUTES, 30, false);
+		if (redisEnable){
+			redisService.setValue("AUTH_" + user.getEmail(), secretKey, TimeUnit.MINUTES, 30, false);
+		} else {
+			user.setSecret(secretKey);
+			usuarioRepository.save(user);
+		}
 		log.info("Sucess on client login [{}]", user.getEmail());
 		return jwtBuilder.withClaim("EXP", nowsec + 100000).withClaim("client", user.getEmail()).sign(algo);
 	}

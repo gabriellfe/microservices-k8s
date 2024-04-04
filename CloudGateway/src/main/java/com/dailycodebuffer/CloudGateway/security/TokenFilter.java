@@ -12,6 +12,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.CloudGateway.model.AuthorizeException;
 import com.dailycodebuffer.CloudGateway.model.UserDTO;
+import com.dailycodebuffer.CloudGateway.model.UsuarioRepository;
 import com.dailycodebuffer.CloudGateway.service.RedisService;
 import com.dailycodebuffer.CloudGateway.util.GwTokenUtil;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,8 +27,11 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 	private final String GATEWAY_TOKEN = "gw_token";
 	private final String TOKEN = "token";
 	
+//	@Autowired
+//	private RedisService redisService;
+	
 	@Autowired
-	private RedisService redisService;
+	private UsuarioRepository repo;
 
 	public static class Config {
 	}
@@ -47,7 +51,8 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 					ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
 					UserDTO user = objectMapper.readValue(body, UserDTO.class);
 
-					String secret = (String) redisService.getValue("AUTH_" + user.getClient());
+//					String secret = (String) repo.getValue("AUTH_" + user.getClient());
+					String secret = repo.findByEmail(user.getClient()).getSecret();
 					if (secret == null)
 						throw new AuthorizeException("Token invalid", HttpStatus.FORBIDDEN);
 					log.info("Secret in redis: [{}]", secret);

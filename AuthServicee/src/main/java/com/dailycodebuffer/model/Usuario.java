@@ -54,6 +54,9 @@ public class Usuario {
     
     @Column(name = "GENERO")
     private String genero;
+    
+    @Column(name = "SECRET")
+    private String secret;
 
     @Column(name = "DT_CRIACAO")
     private Instant dtCriacao;

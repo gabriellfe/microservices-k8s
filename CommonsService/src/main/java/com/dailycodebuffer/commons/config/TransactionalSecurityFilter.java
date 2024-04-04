@@ -35,9 +35,9 @@ public class TransactionalSecurityFilter implements Filter {
 	
 	private final String TOKEN = "token";
 	
-	@Autowired
-	private RedisService redisService;
-
+//	@Autowired
+//	private RedisService redisService;
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -65,34 +65,34 @@ public class TransactionalSecurityFilter implements Filter {
 			return;
 		}
 
-		boolean isAuthorization = this.validateAuthorization(req);
-		if (isAuthorization) {
-			chain.doFilter(request, response);
-			return;
-		}
+//		boolean isAuthorization = this.validateAuthorization(req);
+//		if (isAuthorization) {
+//			chain.doFilter(request, response);
+//			return;
+//		}
 
 		HttpServletResponse res = (HttpServletResponse) response;
 		res.setStatus(401);
 
 	}
 
-	private boolean validateAuthorization(HttpServletRequest req) {
-		try {
-			String jwtToken = req.getHeader(TOKEN);
-			log.info("Token: [{}]", jwtToken);
-			String base64EncodedBody = jwtToken.split("\\.")[1];
-			String body = new String(Base64.getDecoder().decode(base64EncodedBody));
-			ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			UserDTO user = objectMapper.readValue(body, UserDTO.class);
-			log.info("Client: [{}]", user.getClient());
-			log.info("Secret: [{}]", redisService.getValue("AUTH_" + user.getClient()));
-			String secret = (String) redisService.getValue("AUTH_" + user.getClient());
-			JWT.require(Algorithm.HMAC256(secret)).build().verify(jwtToken);
-			return true;
-		} catch (Exception e) {
-			log.error("Error: {}", e);
-		}
-		return false;
-	}
+//	private boolean validateAuthorization(HttpServletRequest req) {
+//		try {
+//			String jwtToken = req.getHeader(TOKEN);
+//			log.info("Token: [{}]", jwtToken);
+//			String base64EncodedBody = jwtToken.split("\\.")[1];
+//			String body = new String(Base64.getDecoder().decode(base64EncodedBody));
+//			ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//			UserDTO user = objectMapper.readValue(body, UserDTO.class);
+//			log.info("Client: [{}]", user.getClient());
+//			log.info("Secret: [{}]", redisService.getValue("AUTH_" + user.getClient()));
+//			String secret = (String) redisService.getValue("AUTH_" + user.getClient());
+//			JWT.require(Algorithm.HMAC256(secret)).build().verify(jwtToken);
+//			return true;
+//		} catch (Exception e) {
+//			log.error("Error: {}", e);
+//		}
+//		return false;
+//	}
 
 }
