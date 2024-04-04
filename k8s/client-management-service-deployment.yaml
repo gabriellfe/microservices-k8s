@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-management-service-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: client-management-service-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: client-management-service-app
+    spec:
+      containers:
+      - name: client-management-service-app
+        image: gabriellfe/clientmanagementservice:IMAGE_URL
+        imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 8082
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          successThreshold: 1
+          httpGet:
+            path: /livenessProbe
+            port: 8082
+        ports:
+        - containerPort: 8082
+        env:
+        - name: CONFIG_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              name: config-cm
+              key: config_url
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-cm
+              key: hostname
+        - name: EUREKA_SERVER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: eureka-cm
+              key: eureka_service_address
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-management-service-svc
+spec:
+  selector:
+    app: client-management-service-app
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 8082
