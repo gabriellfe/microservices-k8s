@@ -16,7 +16,7 @@ public class PetController {
     @Autowired
     private ClientService clientService;
     
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<?> getPets() {
         return new ResponseEntity<>(clientService.listAll(), HttpStatus.OK);
     }

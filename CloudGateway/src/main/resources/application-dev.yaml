@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8092
 
 spring:
   datasource:
@@ -14,6 +14,13 @@ spring:
   cloud:
     gateway:
       routes:
+      #         Estados   
+        - id : AUTH-SERVICE-ESTADOS
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/estados
+          filters:
+            - BypassFilter
 #         Bypass   
         - id : AUTH-SERVICE-COGNITO
           uri: lb://AUTH-SERVICE
@@ -21,6 +28,12 @@ spring:
             - Path=/user/login
           filters:
             - BypassFilter
+        - id : CLIENT-SERVICE
+          uri: lb://CLIENT-MANAGEMENT-SERVICE
+          predicates:
+            - Path=/client/**
+          filters:
+            - TokenFilter
         - id : ORDER-SERVICE
           uri: lb://ORDER-SERVICE
           predicates:

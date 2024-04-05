@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthService {
 	
 	@Value("enable.redis")
-	private boolean redisEnable;
+	private String redisEnable;
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -153,7 +153,7 @@ public class AuthService {
 		JWTCreator.Builder jwtBuilder = JWT.create();
 		Algorithm algo = Algorithm.HMAC256(secretKey);
 		long nowsec = Calendar.getInstance().getTime().getTime() / 1000;
-		if (redisEnable){
+		if (redisEnable == "true"){
 			redisService.setValue("AUTH_" + user.getEmail(), secretKey, TimeUnit.MINUTES, 30, false);
 		} else {
 			user.setSecret(secretKey);

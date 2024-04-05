@@ -27,27 +27,21 @@ public class Client {
     @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "PASSWORD")
-    private String password;
-    
-    @Column(name = "NASCIMENTO")
-    private Date nascimento;
-    
-    @Column(name = "CPF")
-    private String cpf;
-    
     @Column(name = "TELEFONE")
     private String telefone;
     
-    @Column(name = "CIDATE")
+    @Column(name = "CIDADE")
     private String cidade;
+    
+    @Column(name = "BAIRRO")
+    private String bairro;
     
     @Column(name = "ESTADO")
     private String estado;
     
-    @Column(name = "GENERO")
-    private String genero;
-
+    @Column(name = "ENDERECO")
+    private String endereco;
+    
     @Column(name = "DT_CRIACAO")
     private Instant dtCriacao;
 

@@ -1,6 +1,5 @@
 package com.dailycodebuffer.dto;
 
-import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -12,12 +11,11 @@ public class CreateClientDTO {
 	
 	private String email;
 	private String nome;
-	private Date nascimento;
+	private String endereco;
 	private String telefone;
-	private String genero;
+	private String bairro;
 	private EstadoDto estado;
 	private String cidade;
-	private String cpf;
 	private List<PetDTO> pets;
 	
 

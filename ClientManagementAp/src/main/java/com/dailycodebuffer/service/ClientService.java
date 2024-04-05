@@ -39,11 +39,10 @@ public class ClientService{
 		client.setEmail(dto.getEmail());
 		client.setNome(dto.getNome());
 		client.setCidade(dto.getCidade());
-		client.setCpf(dto.getCpf());
 		client.setEstado(dto.getEstado().getSigla());
-		client.setGenero(dto.getGenero());
 		client.setTelefone(dto.getTelefone());
-		client.setNascimento(dto.getNascimento());
+		client.setEndereco(dto.getEndereco());
+		client.setBairro(dto.getBairro());
 		client = clientRepository.save(client);
 		long idCliente = client.getIdClient();
 		dto.getPets().stream().forEach(i -> {
@@ -62,6 +61,6 @@ public class ClientService{
 	}
 
 	public List<Pet> findPets(Long idCliente) {
-		return null;
+		return petService.findPetsByCliente(idCliente);
 	}
 }

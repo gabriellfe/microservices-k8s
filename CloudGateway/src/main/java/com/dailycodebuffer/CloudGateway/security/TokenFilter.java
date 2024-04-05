@@ -3,6 +3,7 @@ package com.dailycodebuffer.CloudGateway.security;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,11 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 	private final String GATEWAY_TOKEN = "gw_token";
 	private final String TOKEN = "token";
 	
-//	@Autowired
-//	private RedisService redisService;
+	@Value("enable.redis")
+	private String redisEnable;
+	
+	@Autowired
+	private RedisService redisService;
 	
 	@Autowired
 	private UsuarioRepository repo;
@@ -50,9 +54,12 @@ public class TokenFilter extends AbstractGatewayFilterFactory<TokenFilter.Config
 					String body = new String(Base64.getDecoder().decode(base64EncodedBody));
 					ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
 					UserDTO user = objectMapper.readValue(body, UserDTO.class);
-
-//					String secret = (String) repo.getValue("AUTH_" + user.getClient());
-					String secret = repo.findByEmail(user.getClient()).getSecret();
+					String secret = null;
+					if (redisEnable.equals("true")) {
+						secret = (String) redisService.getValue("AUTH_" + user.getClient());
+					} else {
+						secret = repo.findByEmail(user.getClient()).getSecret();
+					}
 					if (secret == null)
 						throw new AuthorizeException("Token invalid", HttpStatus.FORBIDDEN);
 					log.info("Secret in redis: [{}]", secret);
