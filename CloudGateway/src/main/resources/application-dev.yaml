@@ -80,6 +80,22 @@ spring:
           filters:
             - CognitoFilter
             - StripPrefix=1
+        - id : PRODUCT-SERVICE-GW
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/gw/product/**
+          filters:
+            - GwFilter
+            - StripPrefix=1
+        - id : PAYMENT-SERVICE-GW
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/gw/payment/**
+          filters:
+            - GwFilter
+            - StripPrefix=1
+    
+    
 #okta:
 #  oauth2:
 #    issuer: https://dev-56986490.okta.com/oauth2/default

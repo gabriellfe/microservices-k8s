@@ -18,6 +18,7 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.dailycodebuffer.commons.service.RedisService;
 import com.dailycodebuffer.dto.LoginRequestDTO;
+import com.dailycodebuffer.dto.LoginResponseDTO;
 import com.dailycodebuffer.dto.UsuarioRequestDTO;
 import com.dailycodebuffer.exception.AuthLoginException;
 import com.dailycodebuffer.model.Usuario;
@@ -36,7 +37,7 @@ public class AuthService {
 	@Autowired
 	private RedisService redisService;
 
-	public String doLogin(LoginRequestDTO login) {
+	public LoginResponseDTO doLogin(LoginRequestDTO login) {
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 
 		Usuario user = usuarioRepository.findByEmail(login.getLogin());
@@ -58,7 +59,8 @@ public class AuthService {
 		long nowsec = Calendar.getInstance().getTime().getTime() / 1000;
 		redisService.setValue("AUTH_" + user.getEmail(), secretKey, TimeUnit.MINUTES, 30, false);
 		log.info("Sucess on client login [{}]", user.getEmail());
-		return jwtBuilder.withClaim("EXP", nowsec + 100000).withClaim("client", user.getEmail()).sign(algo);
+		String jwt = jwtBuilder.withClaim("EXP", nowsec + 100000).withClaim("client", user.getEmail()).sign(algo);
+		return new LoginResponseDTO(jwt);
 	}
 
 	public void createUser(UsuarioRequestDTO login) {

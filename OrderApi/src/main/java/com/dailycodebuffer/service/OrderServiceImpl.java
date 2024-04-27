@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.dailycodebuffer.commons.utils.GwRestClientUtil;
 import com.dailycodebuffer.commons.utils.GwTokenUtil;
 import com.dailycodebuffer.dto.OrderRequest;
 import com.dailycodebuffer.dto.OrderResponse;
@@ -30,6 +32,12 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+	
+	@Value("${url.payment}")
+	private String urlPayment;
+	
+	@Value("${url.product}")
+	private String urlProduct;
 
 	@Override
 	public long placeOrder(OrderRequest orderRequest) {
@@ -38,18 +46,15 @@ public class OrderServiceImpl implements OrderService {
 		// Product Service - Block Products (Reduce the Quantity)
 		// Payment Service -> Payments -> Success-> COMPLETE, Else
 		// CANCELLED
-
 		log.info("Placing Order Request: {}", orderRequest);
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		headers.add("gw_token", GwTokenUtil.generateGwToken());
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-
-		log.info("Invoking Product service to reduce the product id: {}", orderRequest.getProductId());
-		restTemplate.exchange("http://product-service-svc/product/reduceQuantity/" + orderRequest.getProductId() + "?quantity=" + orderRequest.getQuantity(), HttpMethod.PUT, entity, Object.class);
+		String url = urlProduct + "/product/reduceQuantity/" + orderRequest.getProductId() + "?quantity=" + orderRequest.getQuantity();
+		log.info("Invoking Product service url: [{}] to reduce the product id: {}", url, orderRequest.getProductId());
+		try {
+			GwRestClientUtil.getInstance().jsonPut(url, Object.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		log.info("Creating Order with Status CREATED");
 		Order order = Order.builder().amount(orderRequest.getTotalAmount()).orderStatus("CREATED")
@@ -64,10 +69,7 @@ public class OrderServiceImpl implements OrderService {
 
 		String orderStatus = null;
 		try {
-			String reqBodyData = new ObjectMapper().writeValueAsString(paymentRequest);
-			entity = new HttpEntity<>(reqBodyData, headers);
-			restTemplate.exchange("http://payment-service-svc/payment", HttpMethod.POST, entity, Object.class);
-			//			paymentService.doPayment(paymentRequest);
+			GwRestClientUtil.getInstance().jsonPost(urlPayment + "/payment", paymentRequest, Object.class);
 			log.info("Payment done Successfully. Changing the Oder status to PLACED");
 			orderStatus = "PLACED";
 		} catch (Exception e) {
@@ -85,27 +87,24 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderResponse getOrderDetails(long orderId) {
 		log.info("Get order details for Order Id : {}", orderId);
-		
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		headers.add("gw_token", GwTokenUtil.generateGwToken());
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		Order order = orderRepository.findById(orderId).orElseThrow(
 				() -> new CustomException("Order not found for the order Id:" + orderId, "NOT_FOUND", 404));
 		
-		log.info("Invoking Product service to fetch the product for id: {}", order.getProductId());
-		ProductResponse productResponse = restTemplate.exchange("http://product-service-svc/product/" + order.getProductId(), HttpMethod.GET, entity, ProductResponse.class).getBody();
-
-		log.info("Getting payment information form the payment Service");
-		PaymentResponse paymentResponse = restTemplate.exchange("http://payment-service-svc/payment/order/" + order.getId(), HttpMethod.GET, entity, PaymentResponse.class).getBody();
-
+		log.info("Invoking Product service [{}] to fetch the product for id: {}", urlProduct,  order.getProductId());
+		ProductResponse productResponse = null;
+		PaymentResponse paymentResponse = null;
+		log.info("Getting payment information from the payment Service [{}]", urlPayment);
+		try {
+			productResponse = GwRestClientUtil.getInstance().jsonGet(urlProduct + "/gw/product/" + order.getProductId(), ProductResponse.class);
+			paymentResponse = GwRestClientUtil.getInstance().jsonGet(urlPayment + "/gw/payment/order/" + order.getId(), PaymentResponse.class);
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage(), e.getMessage(), 401);
+		}
+		
 		OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
 				.productName(productResponse.getProductName()).productId(productResponse.getProductId()).build();
-
+		
 		OrderResponse.PaymentDetails paymentDetails = OrderResponse.PaymentDetails.builder()
 				.paymentId(paymentResponse.getPaymentId()).paymentStatus(paymentResponse.getStatus())
 				.paymentDate(paymentResponse.getPaymentDate()).paymentMode(paymentResponse.getPaymentMode()).build();
